@@ -10,7 +10,7 @@ public class ImageGrid : MonoBehaviour
     {
         public enum PrimitiveType
         {
-	        Circle = 0,
+            Circle = 0,
             Hex = 1,
             Square = 2,
             Triangle = 3
@@ -18,7 +18,8 @@ public class ImageGrid : MonoBehaviour
 
         public BaseCellValue()
         {
-	        Connections = new BaseCellValue[4];
+            Connections = new BaseCellValue[4];
+            ConnectionInstances = new GameObject[4];
             Primitive = PrimitiveType.Square;
             Scale = 1.0f;
         }
@@ -33,15 +34,15 @@ public class ImageGrid : MonoBehaviour
 
         public static int Dir2Index(Direction2D.RelativeDirection dir)
         {
-            Assert.IsTrue(dir==Direction2D.RelativeDirection.Left || dir == Direction2D.RelativeDirection.Right|| dir == Direction2D.RelativeDirection.Up || dir == Direction2D.RelativeDirection.Down);
+            Assert.IsTrue(dir == Direction2D.RelativeDirection.Left || dir == Direction2D.RelativeDirection.Right || dir == Direction2D.RelativeDirection.Up || dir == Direction2D.RelativeDirection.Down);
             if (dir == Direction2D.RelativeDirection.Left)
-	            return 0;
+                return 0;
             if (dir == Direction2D.RelativeDirection.Up)
-	            return 1;
+                return 1;
             if (dir == Direction2D.RelativeDirection.Right)
-	            return 2;
+                return 2;
             if (dir == Direction2D.RelativeDirection.Down)
-	            return 3;
+                return 3;
             return -1;
         }
     }
@@ -51,7 +52,11 @@ public class ImageGrid : MonoBehaviour
     public List<GameObject> blockPrefabs;
     public GameObject connectionPrefab;
     public Camera Camera;
+
+    public int BlocksCounter { get; private set; }
+
     private BaseCellValue[,] _cells;
+    
 
 
     private void OnValidate()
@@ -84,10 +89,16 @@ public class ImageGrid : MonoBehaviour
         }
 
         // Delete previous value
-        BreakConnection(x, y, x - 1, y);
-        BreakConnection(x, y, x, y + 1);
-        BreakConnection(x, y, x + 1, y);
-        BreakConnection(x, y, x, y - 1);
+        var prevVal = Get(x, y);
+        if (prevVal != null)
+        {
+            Destroy(prevVal.PrimitiveGameObject);
+            BlocksCounter--;
+            BreakConnection(x, y, x - 1, y);
+            BreakConnection(x, y, x, y + 1);
+            BreakConnection(x, y, x + 1, y);
+            BreakConnection(x, y, x, y - 1);
+        }
         _cells[x, y] = cellValue;
 
         if (cellValue != null)
@@ -98,6 +109,7 @@ public class ImageGrid : MonoBehaviour
             cellValue.PrimitiveGameObject = block;
             block.name = $"{x}|{y}";
             block.transform.SetParent(gameObject.transform);
+            BlocksCounter++;
             return block;
         }
         return null;
@@ -105,27 +117,27 @@ public class ImageGrid : MonoBehaviour
 
     public BaseCellValue Get(int x, int y)
     {
-	    if (x < 0)
-		    return null;
-	    if (y < 0)
-		    return null;
-	    if (x >= GridSize.x)
-		    return null;
-	    if (y >= GridSize.y)
-		    return null;
+        if (x < 0)
+            return null;
+        if (y < 0)
+            return null;
+        if (x >= GridSize.x)
+            return null;
+        if (y >= GridSize.y)
+            return null;
         return _cells[x, y];
     }
 
-    public void Connect(int ax, int ay, int bx, int by, bool lerpColors = true)
+    public bool Connect(int ax, int ay, int bx, int by, bool lerpColors = true)
     {
-	    var blockA = Get(ax, ay);
-	    var blockB = Get(bx, by);
+        var blockA = Get(ax, ay);
+        var blockB = Get(bx, by);
 
-        Assert.IsNotNull(blockA, "Can't connect when first block is empty");
-        Assert.IsNotNull(blockB, "Can't connect when second block is empty");
-        
+        if (blockB == null || blockA == null) // Can't connect when first and second blocks are empty
+            return false;
+
         Vector2Int offsetA2B = new Vector2Int(bx - ax, by - ay);
-        Assert.IsTrue( (offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1) 
+        Assert.IsTrue((offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1)
             || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0), "No diagonal connections and non-neighbor connection allowed");
 
         // Assign connections 
@@ -136,7 +148,9 @@ public class ImageGrid : MonoBehaviour
         blockB.Connections[BaseCellValue.Dir2Index(dirB2A)] = blockA;
 
         // Create visual instance
-        var connection = Instantiate(connectionPrefab, new Vector3((ax + bx) * 0.5f, (ay + by ) * 0.5f, 0), Quaternion.identity);
+        var connection = Instantiate(connectionPrefab, 
+            new Vector3((ax + bx) * 0.5f + 0.5f, (ay + by) * 0.5f + 0.5f, 0), 
+            Quaternion.identity);
         connection.name = "Connection";
         connection.transform.SetParent(gameObject.transform);
         blockA.ConnectionInstances[BaseCellValue.Dir2Index(dirA2B)] = connection;
@@ -145,26 +159,29 @@ public class ImageGrid : MonoBehaviour
         // Lerp color of connection visual instance based on 2 blocks colors
         if (lerpColors)
         {
-	        var mixedColor = Color.Lerp(blockA.Color, blockB.Color, 0.5f);
-	        connection.GetComponent<SpriteRenderer>().color = mixedColor;
+            var mixedColor = Color.Lerp(blockA.Color, blockB.Color, 0.5f);
+            connection.GetComponent<SpriteRenderer>().color = mixedColor;
         }
+
+        return true;
     }
 
     public void BreakConnection(int ax, int ay, int bx, int by)
     {
-	    var blockA = Get(ax, ay);
-	    var blockB = Get(bx, by);
-        if(blockA == null || blockB == null)
+        var blockA = Get(ax, ay);
+        var blockB = Get(bx, by);
+        if (blockA == null || blockB == null)
             return;
 
         Vector2Int offsetA2B = new Vector2Int(bx - ax, by - ay);
         Assert.IsTrue((offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1)
-			|| (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0), "No diagonal connections and non-neighbor connection allowed");
+            || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0), "No diagonal connections and non-neighbor connection allowed");
 
         var dirA2B = Direction2D.FromVector(offsetA2B);
         var dirB2A = Direction2D.Opposite(dirA2B);
         blockA.Connections[BaseCellValue.Dir2Index(dirA2B)] = null;
-        Destroy(blockA.ConnectionInstances[BaseCellValue.Dir2Index(dirA2B)]);
+        if (blockA.ConnectionInstances[BaseCellValue.Dir2Index(dirA2B)] != null)
+            Destroy(blockA.ConnectionInstances[BaseCellValue.Dir2Index(dirA2B)]);
         blockA.ConnectionInstances[BaseCellValue.Dir2Index(dirA2B)] = null;
         blockB.Connections[BaseCellValue.Dir2Index(dirB2A)] = null;
         blockB.ConnectionInstances[BaseCellValue.Dir2Index(dirB2A)] = null;
@@ -191,17 +208,17 @@ public class ImageGrid : MonoBehaviour
 
 static class ImageGridHelper
 {
-	public static void Fill(this ImageGrid imgGrid, ImageGrid.BaseCellValue fillValue)
+    public static void Fill(this ImageGrid imgGrid, ImageGrid.BaseCellValue fillValue)
     {
         for (int x = 0; x < imgGrid.GridSize.x; ++x)
             for (int y = 0; y < imgGrid.GridSize.y; ++y)
-	            imgGrid.Set(x, y, fillValue);
+                imgGrid.Set(x, y, fillValue);
     }
 
-	public static void FillRndColor(this ImageGrid imgGrid, IPseudoRandomNumberGenerator rnd)
-	{
-		for (int x = 0; x < imgGrid.GridSize.x; ++x)
-			for (int y = 0; y < imgGrid.GridSize.y; ++y)
-				imgGrid.Set(x, y, new ImageGrid.BaseCellValue { Color = rnd.ColorHSV() });
+    public static void FillRndColor(this ImageGrid imgGrid, IPseudoRandomNumberGenerator rnd)
+    {
+        for (int x = 0; x < imgGrid.GridSize.x; ++x)
+            for (int y = 0; y < imgGrid.GridSize.y; ++y)
+                imgGrid.Set(x, y, new ImageGrid.BaseCellValue { Color = rnd.ColorHSV() });
     }
 }
