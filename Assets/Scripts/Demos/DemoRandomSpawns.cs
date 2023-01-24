@@ -7,6 +7,7 @@ public class DemoRandomSpawns : MonoBehaviour
     public ImageGrid ImageGrid;
     [Range(0f, 1f)]
     public float NextStepDelay;
+    public float ShowBoardDelay;
     public long Seed;
 
     private IPseudoRandomNumberGenerator _rnd;
@@ -21,6 +22,7 @@ public class DemoRandomSpawns : MonoBehaviour
 
     private IEnumerator Demo()
     {
+        yield return new WaitForSeconds(ShowBoardDelay);
         while (true)
         {
             var x = _rnd.Range(0, ImageGrid.GridSize.x);
@@ -28,7 +30,7 @@ public class DemoRandomSpawns : MonoBehaviour
             var cellValue = new ImageGrid.BaseCellValue();
             cellValue.Primitive = _rnd.FromEnum<ImageGrid.BaseCellValue.PrimitiveType>();
             cellValue.Color = _rnd.ColorHSV();
-            cellValue.Scale = 0.6f;
+            cellValue.Scale = 0.8f;
             ImageGrid.Set(x, y, cellValue);
             
             ImageGrid.Connect(x, y, x + 1, y);

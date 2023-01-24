@@ -349,14 +349,22 @@ PrefabInstance:
       objectReference: {fileID: 1311993814}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.x
-      value: 4
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.y
-      value: 4
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: connectionPrefab
+      value: 
+      objectReference: {fileID: 5792939883027160879, guid: 2f0b68a450d185a4d8ec5732361a3cbc, type: 3}
+    - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
+      propertyPath: connectionPrefabVertical
+      value: 
+      objectReference: {fileID: 3551002563265331417, guid: 15496f5401e1eae4ca70c1d14c9f99aa, type: 3}
+    - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
+      propertyPath: connectionPrefabHorizontal
       value: 
       objectReference: {fileID: 5792939883027160879, guid: 2f0b68a450d185a4d8ec5732361a3cbc, type: 3}
     m_RemovedComponents: []
@@ -476,7 +484,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ImageGrid: {fileID: 318559290}
-  NextStepDelay: 0.807
+  NextStepDelay: 0.001
+  ShowBoardDelay: 1
   Seed: 285465
 --- !u!4 &1490590141
 Transform:

@@ -50,7 +50,8 @@ public class ImageGrid : MonoBehaviour
     [Tooltip("Image grid size in cells")]
     public Vector2Int GridSize;
     public List<GameObject> blockPrefabs;
-    public GameObject connectionPrefab;
+    public GameObject connectionPrefabHorizontal;
+    public GameObject connectionPrefabVertical;
     public Camera Camera;
 
     public int BlocksCounter { get; private set; }
@@ -143,6 +144,7 @@ public class ImageGrid : MonoBehaviour
         // Assign connections 
         var dirA2B = Direction2D.FromVector(offsetA2B);
         var dirB2A = Direction2D.Opposite(dirA2B);
+        var connectionPrefab = Direction2D.IsHorizontal(dirB2A) ? connectionPrefabHorizontal : connectionPrefabVertical;
         BreakConnection(ax, ay, bx, by); // Break previous connections
         blockA.Connections[BaseCellValue.Dir2Index(dirA2B)] = blockB;
         blockB.Connections[BaseCellValue.Dir2Index(dirB2A)] = blockA;
