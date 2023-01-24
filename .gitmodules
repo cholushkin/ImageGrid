@@ -1,0 +1,3 @@
+[submodule "Assets/Libs/gamelib"]
+	path = Assets/Libs/gamelib
+	url = https://github.com/cholushkin/gamelib.git
