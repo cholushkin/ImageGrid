@@ -22,6 +22,7 @@ public class ImageGrid : MonoBehaviour
             ConnectionInstances = new GameObject[4];
             Primitive = PrimitiveType.Square;
             Scale = 1.0f;
+            Color = Color.white;
         }
 
         public PrimitiveType Primitive;
@@ -138,8 +139,10 @@ public class ImageGrid : MonoBehaviour
             return false;
 
         Vector2Int offsetA2B = new Vector2Int(bx - ax, by - ay);
-        Assert.IsTrue((offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1)
-            || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0), "No diagonal connections and non-neighbor connection allowed");
+        var validConnection = (offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1)
+            || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0); // No diagonal connections and non-neighbor connection allowed
+        if (!validConnection)
+            return false;
 
         // Assign connections 
         var dirA2B = Direction2D.FromVector(offsetA2B);
@@ -222,5 +225,16 @@ static class ImageGridHelper
         for (int x = 0; x < imgGrid.GridSize.x; ++x)
             for (int y = 0; y < imgGrid.GridSize.y; ++y)
                 imgGrid.Set(x, y, new ImageGrid.BaseCellValue { Color = rnd.ColorHSV() });
+    }
+
+    public static bool HasAnyConnection(this ImageGrid imgGrid, int x, int y)
+    {
+        var cellVal = imgGrid.Get(x, y);
+        if (cellVal == null)
+            return false;
+        foreach (var connection in cellVal.Connections)
+            if (connection != null)
+                return true;
+        return false;
     }
 }

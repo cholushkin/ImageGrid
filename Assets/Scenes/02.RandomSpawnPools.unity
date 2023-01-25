@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &318559290 stripped
+--- !u!114 &946064353 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
   m_PrefabInstance: {fileID: 1132720649}
@@ -314,7 +314,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1490590141}
-  - component: {fileID: 1490590140}
+  - component: {fileID: 1490590142}
   m_Layer: 0
   m_Name: DemoRandomSpawns
   m_TagString: Untagged
@@ -322,22 +322,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1490590140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1490590139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63090c3f600d15b49905489ced07b881, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ImageGrid: {fileID: 318559290}
-  NextStepDelay: 0.001
-  ShowBoardDelay: 1
-  Seed: 285465
 --- !u!4 &1490590141
 Transform:
   m_ObjectHideFlags: 0
@@ -353,3 +337,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1490590142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490590139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c030cce8f0ecc4fb4a55179400da40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ImageGrid: {fileID: 946064353}
+  NextStepDelay: 0
+  ShowBoardDelay: 0.5
+  ConnectWithSameColorOnly: 1
+  Seed: -1
+  Colors:
+  - {r: 0.9176471, g: 0.015686275, b: 0.49411768, a: 1}
+  - {r: 1, g: 0.43137258, b: 0.16078432, a: 1}
+  - {r: 0.98823535, g: 0.9058824, b: 0.003921569, a: 1}
+  - {r: 0.003921569, g: 0.9607844, b: 1, a: 1}
+  Scales:
+  - 0.9
+  - 0.75
+  Primitives: 000000000200000001000000
