@@ -1,13 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using GameLib.Random;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using RangeInt = GameLib.Random.RangeInt;
 
-public class DemoSelfAvoidingWalkEx : MonoBehaviour
+public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
 {
     public class CellValue : ImageGrid.BaseCellValue
     {
         public bool[] Directions = { false, false, false, false };
+    }
+
+    [Serializable]
+    public class SuccessConditions
+    {
+        public RangeInt Steps;
+        public float FillPercent;
     }
 
     public ImageGrid ImageGrid;
@@ -15,8 +26,13 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
     public float NextStepDelay;
     public float ShowBoardDelay;
     public long Seed;
+    public bool RestartOnSuccess;
+    public string CsvFileName;
+    public SuccessConditions SuccessCond;
 
     private IPseudoRandomNumberGenerator _rnd;
+    private int _step;
+
     private static readonly Vector2Int[] _directions = new Vector2Int[4]
     {
         new Vector2Int(-1, 0),
@@ -36,6 +52,8 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
     {
         yield return new WaitForSeconds(ShowBoardDelay);
 
+        var success = false;
+
         // Set the initial position to the random position
         Vector2Int prevPointer = Vector2Int.zero;
         Vector2Int pointer = new Vector2Int(
@@ -44,10 +62,15 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
 
         // Set a block at the initial position
         ImageGrid.Set(pointer.x, pointer.y, new CellValue { Scale = 0.65f, Color = Color.gray });
+        ++_step;
         yield return new WaitForSeconds(NextStepDelay);
 
         while (true)
         {
+            if (SuccessCond.Steps.To!=-1 && (_step > SuccessCond.Steps.To))
+            {
+                break;
+            }
             // Get a random direction to a list of available directions
             List<int> availableDirections = new List<int>(4);
             for (int i = 0; i < 4; ++i)
@@ -72,6 +95,7 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
 
                 // Assign pointer to prev
                 pointer += offset;
+                ++_step;
             }
             // Move to direction
             else
@@ -88,6 +112,7 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
                 var newCellVal = new CellValue { Scale = 0.65f };
                 ImageGrid.Set(pointer.x, pointer.y, newCellVal);
                 ImageGrid.Connect(pointer.x, pointer.y, prevPointer.x, prevPointer.y);
+                ++_step;
 
                 // Check finish condition
                 if (ImageGrid.BlocksCounter == ImageGrid.GridSize.x * ImageGrid.GridSize.y - 1)
@@ -103,15 +128,27 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
                                     ImageGrid.Set(x, y, null);
                             }
                         }
+
+                    success = true;
                         
                     break;
                 }
             }
 
-            
-
             yield return new WaitForSeconds(NextStepDelay);
         }
+
+        // Log experiment results to CSV file
+        if (!string.IsNullOrEmpty(CsvFileName) && success)
+        {
+            var header = "Seed;GridSize;Steps";
+            var line = $"{Seed};{ImageGrid.GridSize.x}x{ImageGrid.GridSize.y};{_step}";
+            AppendStringToCSV(Application.dataPath + "/" + CsvFileName, header, line);
+        }
+
+        // Reload current scene
+        Scene scene = SceneManager.GetActiveScene(); 
+        SceneManager.LoadScene(scene.name);
     }
 
     private bool IsValidMove(Vector2Int move)
@@ -120,5 +157,25 @@ public class DemoSelfAvoidingWalkEx : MonoBehaviour
         if (move.x < 0 || move.x >= ImageGrid.GridSize.x || move.y < 0 || move.y >= ImageGrid.GridSize.y)
             return false;
         return ImageGrid.Get(move.x, move.y) == null;
+    }
+
+    public static void AppendStringToCSV(string filePath, string header, string newLine)
+    {
+        var newFile = false;
+        // Check if the file already exists
+        if (!File.Exists(filePath))
+        {
+            // If the file doesn't exist, create it
+            File.Create(filePath).Dispose();
+            newFile = true;
+        }
+
+        // Open the file to write the new line
+        using (StreamWriter sw = File.AppendText(filePath))
+        {
+            if(newFile)
+                sw.WriteLine(header);
+            sw.WriteLine(newLine);
+        }
     }
 }

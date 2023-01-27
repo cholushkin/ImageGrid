@@ -54,6 +54,7 @@ public class ImageGrid : MonoBehaviour
     public GameObject connectionPrefabHorizontal;
     public GameObject connectionPrefabVertical;
     public Camera Camera;
+    public float CameraOffset;
 
     public int BlocksCounter { get; private set; }
 
@@ -201,7 +202,7 @@ public class ImageGrid : MonoBehaviour
         var cameraHeight = spriteWorldHeight;
         var cameraWidth = spriteWorldHeight / screenAspectRatio;
         cam.orthographicSize = cameraHeight * 0.5f;
-        cam.transform.position += Vector3.right * spriteWorldWidth * 0.5f;
+        cam.transform.position += Vector3.right * spriteWorldWidth * 0.5f + Vector3.left * CameraOffset;
         cam.transform.position += Vector3.up * cameraHeight * 0.5f;
     }
 
