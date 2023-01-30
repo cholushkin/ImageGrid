@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using GameLib;
 using GameLib.Random;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using RangeInt = GameLib.Random.RangeInt;
 
-public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
+public partial class DemoSelfAvoidingWalkBacktracking : MonoBehaviour
 {
     public class CellValue : ImageGrid.BaseCellValue
     {
@@ -32,14 +33,6 @@ public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
 
     private IPseudoRandomNumberGenerator _rnd;
     private int _step;
-
-    private static readonly Vector2Int[] _directions = new Vector2Int[4]
-    {
-        new Vector2Int(-1, 0),
-        new Vector2Int(0, 1),
-        new Vector2Int(1, 0),
-        new Vector2Int(0, -1)
-    };
 
     private void Start()
     {
@@ -67,14 +60,14 @@ public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
 
         while (true)
         {
-            if (SuccessCond.Steps.To!=-1 && (_step > SuccessCond.Steps.To))
+            if (SuccessCond.Steps.To !=-1 && (_step >= SuccessCond.Steps.To))
             {
                 break;
             }
             // Get a random direction to a list of available directions
             List<int> availableDirections = new List<int>(4);
             for (int i = 0; i < 4; ++i)
-                if (IsValidMove(pointer + _directions[i]) && (ImageGrid.Get(pointer.x, pointer.y) as CellValue).Directions[i]==false)
+                if (IsValidMove(pointer + Direction2D.OrthogonalDirections[i]) && (ImageGrid.Get(pointer.x, pointer.y) as CellValue).Directions[i]==false)
                     availableDirections.Add(i);
 
             // Return one step back
@@ -86,7 +79,7 @@ public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
                 for (int i = 0; i < connections.Length; ++i)
                     if (connections[i] != null)
                     {
-                        offset = _directions[i];
+                        offset = Direction2D.OrthogonalDirections[i];
                         break;
                     }
 
@@ -102,7 +95,7 @@ public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
             {
                 // Choose one of available direction and mark it as used
                 var dirIndex = _rnd.FromList(availableDirections);
-                var moveDirection = _directions[dirIndex];
+                var moveDirection = Direction2D.OrthogonalDirections[dirIndex];
                 (ImageGrid.Get(pointer.x, pointer.y) as CellValue).Directions[dirIndex] = true;
 
                 prevPointer = pointer;
@@ -139,16 +132,19 @@ public partial class DemoSelfAvoidingWalkEx : MonoBehaviour
         }
 
         // Log experiment results to CSV file
-        if (!string.IsNullOrEmpty(CsvFileName) && success)
+        if (!string.IsNullOrEmpty(CsvFileName) /*&& success*/)
         {
-            var header = "Seed;GridSize;Steps";
-            var line = $"{Seed};{ImageGrid.GridSize.x}x{ImageGrid.GridSize.y};{_step}";
+            var header = "Seed;GridSize;Steps;Success";
+            var line = $"{Seed};{ImageGrid.GridSize.x}x{ImageGrid.GridSize.y};{_step};{success}";
             AppendStringToCSV(Application.dataPath + "/" + CsvFileName, header, line);
         }
 
-        // Reload current scene
-        Scene scene = SceneManager.GetActiveScene(); 
-        SceneManager.LoadScene(scene.name);
+        if (RestartOnSuccess)
+        {
+            // Reload current scene
+            Scene scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+        }
     }
 
     private bool IsValidMove(Vector2Int move)

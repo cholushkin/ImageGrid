@@ -204,11 +204,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.x
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.y
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: CameraOffset
@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 1490590141}
   - component: {fileID: 1490590142}
   m_Layer: 0
-  m_Name: DemoSelfAvoidingWalkEx
+  m_Name: DemoSelfAvoidingWalkBacktracking
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -359,14 +359,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ImageGrid: {fileID: 946064353}
   NextStepDelay: 0
-  ShowBoardDelay: 0.5
+  ShowBoardDelay: 0.1
   Seed: -1
   RestartOnSuccess: 0
-  CsvFileName: 5x5Experiment600Steps.csv
+  CsvFileName: 
   SuccessCond:
     Steps:
       From: 0
-      To: 600
+      To: -1
     FillPercent: 0
 --- !u!4 &1024104416067304244
 Transform:

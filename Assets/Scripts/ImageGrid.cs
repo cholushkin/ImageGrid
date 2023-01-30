@@ -33,6 +33,7 @@ public class ImageGrid : MonoBehaviour
         public BaseCellValue[] Connections;
         public GameObject[] ConnectionInstances;
 
+        // todo: move to helper class
         public static int Dir2Index(Direction2D.RelativeDirection dir)
         {
             Assert.IsTrue(dir == Direction2D.RelativeDirection.Left || dir == Direction2D.RelativeDirection.Right || dir == Direction2D.RelativeDirection.Up || dir == Direction2D.RelativeDirection.Down);
@@ -47,6 +48,7 @@ public class ImageGrid : MonoBehaviour
             return -1;
         }
     }
+
     public SpriteRenderer SpriteRenderer;
     [Tooltip("Image grid size in cells")]
     public Vector2Int GridSize;
@@ -57,6 +59,7 @@ public class ImageGrid : MonoBehaviour
     public float CameraOffset;
 
     public int BlocksCounter { get; private set; }
+    public BaseCellValue[,] GetCells => _cells;
 
     private BaseCellValue[,] _cells;
     
