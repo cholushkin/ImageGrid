@@ -241,4 +241,12 @@ static class ImageGridHelper
                 return true;
         return false;
     }
+
+    public static bool IsEmptyCell(this ImageGrid imgGrid, int x, int y)
+    {
+	    // Check if the new position is within the grid bounds
+	    if (x < 0 || x >= imgGrid.GridSize.x || y < 0 || y >= imgGrid.GridSize.y)
+		    return false;
+	    return imgGrid.Get(x, y) == null;
+    }
 }
