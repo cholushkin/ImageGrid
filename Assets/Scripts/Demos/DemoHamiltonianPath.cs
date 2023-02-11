@@ -25,24 +25,6 @@ public partial class DemoHamiltonianPath : MonoBehaviour
 		Cycle
 	}
 
-	class Cell : ImageGrid.BaseCellValue
-	{
-		public Direction2D.RelativeDirection OutgoingDirection;
-		public Direction2D.RelativeDirection IncomingDirection;
-	}
-
-	public class CellValue : ImageGrid.BaseCellValue
-	{
-		public bool[] Directions = { false, false, false, false };
-	}
-
-	[Serializable]
-	public class SuccessConditions
-	{
-		public RangeInt Steps;
-		public float FillPercent;
-	}
-
 	public ImageGrid ImageGrid;
 	[Range(0f, 1f)]
 	public float NextStepDelay;
@@ -50,7 +32,6 @@ public partial class DemoHamiltonianPath : MonoBehaviour
 	public long Seed;
 	public bool RestartOnSuccess;
 	public string CsvFileName;
-	public SuccessConditions SuccessCond;
 
 	private IPseudoRandomNumberGenerator _rnd;
 	private int _step;
@@ -61,6 +42,7 @@ public partial class DemoHamiltonianPath : MonoBehaviour
 		_state = State.Initializing;
 		_rnd = RandomHelper.CreateRandomNumberGenerator(Seed);
 		Seed = _rnd.GetState().AsNumber();
+		Assert.IsTrue(ImageGrid.GridSize.x % 2 == 0);
 		StartCoroutine(Generate());
 	}
 
@@ -71,7 +53,6 @@ public partial class DemoHamiltonianPath : MonoBehaviour
 		_state = State.Processing;
 
 		CreateSimpleHamiltonianCycle(ImageGrid);
-		MakeConnections(ImageGrid);
 
 		if (RestartOnSuccess && _state == State.Success)
 		{
@@ -81,62 +62,31 @@ public partial class DemoHamiltonianPath : MonoBehaviour
 		}
 	}
 
-	private void MakeConnections(ImageGrid grid)
-	{
-		for (int x = 0; x < grid.GridSize.x; ++x)
-		{
-			for (int y = 0; y < grid.GridSize.y; ++y)
-			{
-				var cell = grid.Get(x, y) as Cell;
-				if(cell == null)
-					continue;
-				var offset = Direction2D.Offset(cell.OutgoingDirection);
-				grid.Connect(x, y, x + offset.x, y + offset.y);
-			}
-		}
-	}
-
 	private void CreateSimpleHamiltonianCycle(ImageGrid grid)
 	{
-		for (int col = 0; col < grid.GridSize.x;)
+		Vector2Int prev = Vector2Int.zero;
+
+        void Step(int x, int y)
+        {
+            grid.Set(x, y, new ImageGrid.BaseCellValue { Scale = 0.7f });
+            grid.Connect(x, y, prev.x, prev.y);
+            prev.Set(x, y);
+		}
+
+		for (int col = 0; col < grid.GridSize.x; col += 2)
 		{
 			// Go up
 			for (int row = 1; row < grid.GridSize.y; row++)
-			{
-				var cell = new Cell
-				{
-					OutgoingDirection = row == grid.GridSize.y - 1 ? Direction2D.RelativeDirection.Right : Direction2D.RelativeDirection.Up,
-					IncomingDirection = row == 1 ? Direction2D.RelativeDirection.Right : Direction2D.RelativeDirection.Down,
-					Scale = 0.8f
-				};
-				grid.Set(col, row, cell);
-			}
-			col++;
+                Step(col, row);
 
 			// Go down
 			for (int row = grid.GridSize.y - 1; row > 0; row--)
-			{
-				var cell = new Cell
-				{
-					OutgoingDirection = row == 1 ? Direction2D.RelativeDirection.Right : Direction2D.RelativeDirection.Down,
-					IncomingDirection = row == grid.GridSize.y - 1 ? Direction2D.RelativeDirection.Left : Direction2D.RelativeDirection.Up,
-					Scale = 0.8f
-				};
-				grid.Set(col, row, cell);
-			}
-			col++;
+                Step(col + 1, row);
 		}
 
-		// Go right
-		for (int col = 0; col < grid.GridSize.x; col++)
-		{
-			var cell = new Cell
-			{
-				OutgoingDirection = col == 0 ? Direction2D.RelativeDirection.Up : Direction2D.RelativeDirection.Left,
-				IncomingDirection = Direction2D.RelativeDirection.Center,
-				Scale = 0.8f
-			};
-			grid.Set(col, 0, cell);
-		}
-	}
+		// Go left
+		for (int col = grid.GridSize.x - 1; col >= 0; --col)
+            Step(col, 0);
+        ImageGrid.Connect(0, 0, 0, 1);
+    }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameLib;
 using GameLib.Random;
 using UnityEngine;
@@ -33,7 +35,6 @@ public class ImageGrid : MonoBehaviour
         public BaseCellValue[] Connections;
         public GameObject[] ConnectionInstances;
 
-        // todo: move to helper class
         public static int Dir2Index(Direction2D.RelativeDirection dir)
         {
             Assert.IsTrue(dir == Direction2D.RelativeDirection.Left || dir == Direction2D.RelativeDirection.Right || dir == Direction2D.RelativeDirection.Up || dir == Direction2D.RelativeDirection.Down);
@@ -59,10 +60,10 @@ public class ImageGrid : MonoBehaviour
     public float CameraOffset;
 
     public int BlocksCounter { get; private set; }
-    public BaseCellValue[,] GetCells => _cells;
+    public BaseCellValue[,] Cells => _cells;
 
     private BaseCellValue[,] _cells;
-    
+
 
 
     private void OnValidate()
@@ -144,7 +145,7 @@ public class ImageGrid : MonoBehaviour
 
         Vector2Int offsetA2B = new Vector2Int(bx - ax, by - ay);
         var validConnection = (offsetA2B.x == 0 && offsetA2B.y == 1) || (offsetA2B.x == 0 && offsetA2B.y == -1)
-            || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0); // No diagonal connections and non-neighbor connection allowed
+            || (offsetA2B.x == -1 && offsetA2B.y == 0) || (offsetA2B.x == 1 && offsetA2B.y == 0); // No diagonal connections and non-neighbor connection allowed, as long as self-connection 
         if (!validConnection)
             return false;
 
@@ -157,8 +158,8 @@ public class ImageGrid : MonoBehaviour
         blockB.Connections[BaseCellValue.Dir2Index(dirB2A)] = blockA;
 
         // Create visual instance
-        var connection = Instantiate(connectionPrefab, 
-            new Vector3((ax + bx) * 0.5f + 0.5f, (ay + by) * 0.5f + 0.5f, 0), 
+        var connection = Instantiate(connectionPrefab,
+            new Vector3((ax + bx) * 0.5f + 0.5f, (ay + by) * 0.5f + 0.5f, 0),
             Quaternion.identity);
         connection.name = "Connection";
         connection.transform.SetParent(gameObject.transform);
@@ -231,6 +232,15 @@ static class ImageGridHelper
                 imgGrid.Set(x, y, new ImageGrid.BaseCellValue { Color = rnd.ColorHSV() });
     }
 
+
+    public static void FillWithObstacles(this ImageGrid imgGrid, float density, IPseudoRandomNumberGenerator rnd)
+    {
+        for (int x = 0; x < imgGrid.GridSize.x; ++x)
+            for (int y = 0; y < imgGrid.GridSize.y; ++y)
+                if (rnd.ValueFloat() < density)
+                    imgGrid.Set(x, y, new ImageGrid.BaseCellValue { Color = Color.black, Primitive = ImageGrid.BaseCellValue.PrimitiveType.Hex });
+    }
+
     public static bool HasAnyConnection(this ImageGrid imgGrid, int x, int y)
     {
         var cellVal = imgGrid.Get(x, y);
@@ -242,11 +252,71 @@ static class ImageGridHelper
         return false;
     }
 
+    public static bool IsInsideGrid(this ImageGrid imgGrid, int x, int y)
+    {
+        // Check if the new position is within the grid bounds
+        return (x >= 0 && x < imgGrid.GridSize.x && y >= 0 && y < imgGrid.GridSize.y);
+    }
+
     public static bool IsEmptyCell(this ImageGrid imgGrid, int x, int y)
     {
-	    // Check if the new position is within the grid bounds
-	    if (x < 0 || x >= imgGrid.GridSize.x || y < 0 || y >= imgGrid.GridSize.y)
-		    return false;
-	    return imgGrid.Get(x, y) == null;
+        if (!imgGrid.IsInsideGrid(x, y))
+            return false;
+        return imgGrid.Get(x, y) == null;
+    }
+
+
+    public static List<(ImageGrid.BaseCellValue, Vector2Int)> GetAll(this ImageGrid imgGrid, Func<ImageGrid.BaseCellValue, bool> Condition)
+    {
+        List<(ImageGrid.BaseCellValue, Vector2Int)> result = new List<(ImageGrid.BaseCellValue, Vector2Int)>();
+        for (int x = 0; x < imgGrid.GridSize.x; ++x)
+            for (int y = 0; y < imgGrid.GridSize.y; ++y)
+            {
+                var val = imgGrid.Get(x, y);
+                if (Condition(val))
+                    result.Add((val, new Vector2Int(x, y)));
+            }
+
+        return result;
+    }
+
+    public static List<Vector2Int> GetEmptyCells(this ImageGrid imgGrid)
+    {
+        return Enumerable.Range(0, imgGrid.Cells.GetLength(0))
+            .SelectMany(x => Enumerable.Range(0, imgGrid.Cells.GetLength(1))
+                .Where(y => imgGrid.Cells[x, y] != null)
+                .Select(y => new Vector2Int(x, y))).ToList();
+    }
+
+    // Get all orthogonal neighbors if they are:
+    // - Inside the grid
+    // - Meet PickupCondition if it's passed
+    public static List<(ImageGrid.BaseCellValue, Vector2Int)> GetNeigbours(this ImageGrid imgGrid, int x, int y, bool isReturnEmptyNeighbour = false, Func<ImageGrid.BaseCellValue, bool> PickupCondition = null)
+    {
+        List<(ImageGrid.BaseCellValue, Vector2Int)> neigbours = new List<(ImageGrid.BaseCellValue, Vector2Int)>(4);
+        foreach (var offset in Direction2D.OrthogonalDirections)
+        {
+            var checkPos = new Vector2Int(x + offset.x, y + offset.y);
+            if (!imgGrid.IsInsideGrid(checkPos.x, checkPos.y))
+                continue;
+            var cell = imgGrid.Get(checkPos.x, checkPos.y);
+            if (cell == null)
+            {
+                if (isReturnEmptyNeighbour)
+                    neigbours.Add((cell, checkPos));
+                continue;
+            }
+
+            if (PickupCondition != null)
+            {
+                if (PickupCondition(cell))
+                    neigbours.Add((cell, checkPos));
+            }
+            else
+            {
+                neigbours.Add((cell, checkPos));
+            }
+        }
+        return neigbours;
     }
 }

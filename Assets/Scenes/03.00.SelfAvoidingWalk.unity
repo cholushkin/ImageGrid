@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 1490590141}
   - component: {fileID: 1490590142}
   m_Layer: 0
-  m_Name: DemoSelfAvoidingWalk
+  m_Name: DemoSelfAvoidingWalkMaza
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -352,4 +352,5 @@ MonoBehaviour:
   ImageGrid: {fileID: 946064353}
   NextStepDelay: 0.072
   ShowBoardDelay: 0.5
+  Obstacles: 0.25
   Seed: -1

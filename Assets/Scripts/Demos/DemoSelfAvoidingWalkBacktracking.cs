@@ -27,6 +27,8 @@ public partial class DemoSelfAvoidingWalkBacktracking : MonoBehaviour
     public float NextStepDelay;
     public float ShowBoardDelay;
     public long Seed;
+    [Range(0f, 1f)]
+    public float Obstacles;
     public bool RestartOnSuccess;
     public string CsvFileName;
     public SuccessConditions SuccessCond;
@@ -38,6 +40,8 @@ public partial class DemoSelfAvoidingWalkBacktracking : MonoBehaviour
     {
         _rnd = RandomHelper.CreateRandomNumberGenerator(Seed);
         Seed = _rnd.GetState().AsNumber();
+        if (Obstacles > 0f)
+            ImageGrid.FillWithObstacles(Obstacles, _rnd);
         StartCoroutine(Walk());
     }
 

@@ -62,7 +62,7 @@ public partial class DemoSelfAvoidingWalkWaveCheck : MonoBehaviour
         yield return new WaitForSeconds(ShowBoardDelay);
 
         _state = State.Processing;
-        _waveProcessor = new SimpleWaveProcessor<ImageGrid.BaseCellValue>(ImageGrid.GetCells, WallFunction);
+        _waveProcessor = new SimpleWaveProcessor<ImageGrid.BaseCellValue>(ImageGrid.Cells, WallFunction);
 
         // Set the initial position to the random position
         Vector2Int prevPointer = Vector2Int.zero;

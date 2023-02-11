@@ -335,11 +335,11 @@ PrefabInstance:
       objectReference: {fileID: 519420031}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.x
-      value: 24
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.y
-      value: 16
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

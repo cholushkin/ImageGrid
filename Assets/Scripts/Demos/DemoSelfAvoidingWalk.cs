@@ -1,4 +1,5 @@
 using System.Collections;
+using GameLib;
 using GameLib.Random;
 using UnityEngine;
 
@@ -8,21 +9,18 @@ public class DemoSelfAvoidingWalk : MonoBehaviour
     [Range(0f, 1f)]
     public float NextStepDelay;
     public float ShowBoardDelay;
+    [Range(0f, 1f)]
+    public float Obstacles;
     public long Seed;
 
     private IPseudoRandomNumberGenerator _rnd;
-    private static readonly Vector2Int[] _directions = new Vector2Int[4]
-    {
-        new Vector2Int(-1, 0),
-        new Vector2Int(0, 1),
-        new Vector2Int(1, 0),
-        new Vector2Int(0, -1)
-    };
 
     private void Start()
     {
         _rnd = RandomHelper.CreateRandomNumberGenerator(Seed);
         Seed = _rnd.GetState().AsNumber();
+        if (Obstacles > 0f)
+            ImageGrid.FillWithObstacles(Obstacles, _rnd);
         StartCoroutine(Walk());
     }
 
@@ -37,13 +35,13 @@ public class DemoSelfAvoidingWalk : MonoBehaviour
             _rnd.Range(0, ImageGrid.GridSize.y));
 
         // Set a block at the initial position
-        ImageGrid.Set(pointer.x, pointer.y, new ImageGrid.BaseCellValue { Scale = 0.65f, Color = Color.gray});
+        ImageGrid.Set(pointer.x, pointer.y, new ImageGrid.BaseCellValue { Scale = 0.65f, Color = Color.gray });
         yield return new WaitForSeconds(NextStepDelay);
 
         while (true)
         {
             // Get a random direction to move in
-            Vector2Int moveDirection = _rnd.FromArray(_directions);
+            Vector2Int moveDirection = _rnd.FromArray(Direction2D.OrthogonalDirections);
 
             // Check if the new position is valid (not out of bounds and not already occupied)
             if (IsValidMove(pointer + moveDirection))
