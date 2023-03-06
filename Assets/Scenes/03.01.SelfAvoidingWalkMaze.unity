@@ -200,7 +200,7 @@ PrefabInstance:
       objectReference: {fileID: 1311993814}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.x
-      value: 32
+      value: 48
       objectReference: {fileID: 0}
     - target: {fileID: 8195115184519652799, guid: 47884119ebdc74547acefa7297c40005, type: 3}
       propertyPath: GridSize.y
@@ -352,7 +352,7 @@ MonoBehaviour:
   ImageGrid: {fileID: 946064353}
   NextStepDelay: 0.044
   ShowBoardDelay: 0
-  Obstacles: 0
-  EachBranchRandomColor: 0
+  Obstacles: 0.014
+  EachBranchRandomColor: 1
   BranchColor: {r: 1, g: 1, b: 1, a: 1}
   Seed: -1
