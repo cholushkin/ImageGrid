@@ -1,6 +1,7 @@
 # ImageGrid
+Some algorithms and experiments on grid.
 
-Tutorial video (click on image):
+This project is a part of GRID ADVENTURE (click on image to play video):
 [<img src="https://i3.ytimg.com/vi/11Y5TF8KlP8/maxresdefault.jpg" width="50%">](https://youtu.be/11Y5TF8KlP8)
 
 ![Screenshot_1](Images/Screenshot_1.png)
