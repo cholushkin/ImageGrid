@@ -204,13 +204,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118163423}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &290666914
 PrefabInstance:
@@ -359,10 +359,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ImageGrid: {fileID: 1362353353}
-  NextStepDelay: 0
+  NextStepDelay: 0.027
   ShowBoardDelay: 0
-  Seed: 0
-  Obstacles: 0.347
+  Seed: -1
+  Colors:
+  - {r: 0.6237992, g: 0.26699895, b: 0.754717, a: 1}
+  - {r: 0.8773585, g: 0.376602, b: 0.55588514, a: 1}
+  - {r: 0.5188679, g: 0.22761656, b: 0.33228502, a: 1}
+  - {r: 0.8584906, g: 0.6762638, b: 0.74175155, a: 1}
+  - {r: 0.85882354, g: 0.83628464, b: 0.6745098, a: 1}
+  - {r: 0.8773585, g: 0.8155454, b: 0.39315593, a: 1}
+  - {r: 0.8113208, g: 0.16456035, b: 0.19068672, a: 1}
+  - {r: 0.8679245, g: 0.54137516, b: 0.118725546, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  Obstacles: 0.111
   RestartOnSuccess: 0
   CsvFileName: 
   SuccessCond:
@@ -377,13 +387,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832391339}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.268057, y: 15.869302, z: -0.1354007}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1362353353 stripped
 MonoBehaviour:
@@ -396,3 +406,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4951c81c6e31f940b7fd22be3015020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 118163426}
+  - {fileID: 290666914}
+  - {fileID: 832391341}

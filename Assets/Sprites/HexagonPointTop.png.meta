@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: 3cab6263ee16dfb4aaf74d0ff5fe3bda
+guid: 0f6bd5aa104d70c4ea3f7691a07c110f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7482667652216324306
-    second: Square
+      213: -2135585597343286014
+    second: Hexagon Point Top
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 256
-  spriteBorder: {x: 4, y: 4, z: 4, w: 4}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -68,7 +68,6 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -118,54 +117,60 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Server
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Triangle
+      name: Hexagon Point Top
       rect:
         serializedVersion: 2
-        x: 0
+        x: 15
         y: 0
-        width: 256
+        width: 226
         height: 256
-      alignment: 9
+      alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: 0, y: 93.70251}
-        - {x: -128, y: -128}
-        - {x: 128, y: -128}
+      - - {x: -4, y: 128}
+        - {x: -113, y: 65}
+        - {x: -113, y: -65}
+        - {x: -4, y: -128}
+        - {x: 4, y: -128}
+        - {x: 113, y: -65}
+        - {x: 113, y: 65}
+        - {x: 4, y: 128}
       physicsShape:
-      - - {x: 0, y: 93.70251}
-        - {x: -128, y: -128}
-        - {x: 128, y: -128}
+      - - {x: -111, y: 64}
+        - {x: -111, y: -64}
+        - {x: 0, y: -128}
+        - {x: 111, y: -64}
+        - {x: 111, y: 64}
+        - {x: 0, y: 128}
       tessellationDetail: 0
       bones: []
-      spriteID: 2d009a6b596c7d760800000000000000
-      internalID: 7482667652216324306
+      spriteID: 20db9eac630ec52e0800000000000000
+      internalID: -2135585597343286014
       vertices: []
       indices: 
       edges: []
       weights: []
-    outline: []
+    outline:
+    - - {x: -4, y: 128}
+      - {x: -113, y: 65}
+      - {x: -113, y: -65}
+      - {x: -4, y: -128}
+      - {x: 4, y: -128}
+      - {x: 113, y: -65}
+      - {x: 113, y: 65}
+      - {x: 4, y: 128}
     physicsShape:
-    - - {x: -128, y: 128}
-      - {x: -128, y: -128}
-      - {x: 128, y: -128}
-      - {x: 128, y: 128}
+    - - {x: -111, y: 64}
+      - {x: -111, y: -64}
+      - {x: 0, y: -128}
+      - {x: 111, y: -64}
+      - {x: 111, y: 64}
+      - {x: 0, y: 128}
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
@@ -175,8 +180,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Triangle: 7482667652216324306
-  spritePackingTag: 
+      Hexagon Point Top: -2135585597343286014
   pSDRemoveMatte: 0
   userData: 
   assetBundleName: 

@@ -12,3 +12,4 @@ This project is a part of GRID ADVENTURE (click on image to play video):
 ![Screenshot_6](Images/Screenshot_6.png)
 ![Screenshot_7](Images/Screenshot_7.png)
 ![Screenshot_8](Images/Screenshot_8.png)
+![Screenshot_9](Images/Screenshot_9.png)
